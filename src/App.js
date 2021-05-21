@@ -38,7 +38,7 @@ export default function App() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function (position) {
         const { latitude, longitude } = position.coords;
-        console.log("New user pos:", latitude, longitude)
+        console.log("User position found:", latitude, longitude)
 
         const userMarker = {
           id: "me",
@@ -65,9 +65,8 @@ export default function App() {
 
     fetch(url).then(res => {
       res.json().then(data => {
-        console.log("New planes", data)
         if (data.states) {
-          const newPlanes = data.states.map(plane => {
+          const incomingPlanes = data.states.map(plane => {
             const id = plane[0];
             const lat = plane[6];
             const lng = plane[5];
@@ -76,12 +75,12 @@ export default function App() {
           setMarkers((prev) => {
             const userMarker = getUserMarker(prev);
             const currPlanes = prev.filter(p => p.id !== "me");
-            const unionPlanes = newPlanes
+            const newPlanes = incomingPlanes.filter(np => !currPlanes.some(cp => cp.id === np.id))
+            const unionPlanes = incomingPlanes
               .filter(np => currPlanes.some(cp => cp.id === np.id))
               .map(p => {
                 const { lat, lng } = p;
                 const { lat: prevLat, lng: prevLng, rotation: prevRotation } = currPlanes.find(cp => cp.id === p.id);
-                console.log(lat, lng, prevLat, prevLng)
 
                 const rotation = coordinateChange(lat, lng, prevLat, prevLng) ? calcRotation(lat, lng, prevLat, prevLng) : prevRotation;
                 return ({
@@ -90,9 +89,10 @@ export default function App() {
                 });
               })
 
+            const newState = unionPlanes.length ? [userMarker, ...unionPlanes, ...newPlanes] : [userMarker, ...incomingPlanes];
 
-            console.log("union", unionPlanes)
-            const newState = unionPlanes.length ? [userMarker, ...unionPlanes] : [userMarker, ...newPlanes];
+            console.log(`${unionPlanes.length} updated 🛩  ${newPlanes.length} new 🛩 `);
+
 
             return newState;
           });
