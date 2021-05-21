@@ -36,3 +36,10 @@ button {
   color: #aaa;
   font-size: 12px;
 }
+
+@media only screen and (max-width: 600px) {
+  h3,
+  p {
+    font-size: 10px;
+  }
+}
