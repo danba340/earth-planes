@@ -18,8 +18,11 @@ const LONGITUDE_OFFSET = -Math.PI / 2;
 export default function Model({ marker }) {
   const { lat, lng, rotation } = marker;
 
+  // Helper variables for conditionals
   const markerIsPlane = isPlane(marker);
+  const hasCoordinates = lat && lng;
 
+  // Calculate lat,lng to radian rotations for earth
   const lngRot = -(lng * Math.PI / 180) + LONGITUDE_OFFSET;
   const latRot = (lat * Math.PI / 180);
 
@@ -38,7 +41,6 @@ export default function Model({ marker }) {
 
   const { nodes, materials } = useGLTF('/earth.gltf')
 
-  const hasCoordinates = lat && lng;
   return (
     <>
       <a.group onClick={earthClick} rotation={earthRotation} scale={scale} dispose={null}>

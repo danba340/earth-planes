@@ -10,6 +10,7 @@ import React from 'react'
 import { useGLTF } from '@react-three/drei'
 import { a, useSpring } from '@react-spring/three';
 
+// Offset so correct for model initial positon compared to earth
 const AIRPLANE_ROTATE_OFFSET = -Math.PI / 2;
 
 export default function Airplane({ planeRotation, position }) {

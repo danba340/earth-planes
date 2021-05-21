@@ -14,7 +14,10 @@ import {
   coordinateChange,
 } from './utils';
 
+// Create Bounding square with BOUNDS_SIZE * 2 sides, to look for planes in
 const BOUNDS_SIZE = 2;
+
+// Initial marker, before user is found
 const nullIslandMarker = {
   id: "nullIsland",
   lat: 0,
@@ -25,10 +28,37 @@ export default function App() {
   const [markers, setMarkers] = useState([])
   const [activeMarkerId, setActiveMarkerId] = useState("");
 
+  // Helper variebles for conditionals
   const activeMarkerIndex = markers.findIndex(m => m.id === activeMarkerId);
   const hasMarker = activeMarkerIndex !== -1;
   const activeMarkerIsPlane = activeMarkerId !== "me" && activeMarkerId.length;
 
+  // Get user location and save to markers and set active marker to user location marker
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (position) {
+        const { latitude, longitude } = position.coords;
+        console.log("New user pos:", latitude, longitude)
+
+        const userMarker = {
+          id: "me",
+          lat: latitude,
+          lng: longitude,
+        }
+        setMarkers((prev) => {
+          const withoutMe = prev.filter(m => m.id !== 'me');
+          return [...withoutMe, userMarker];
+        });
+        setActiveMarkerId("me");
+      }, function (err) {
+        alert(`There was an error getting your location`)
+      });
+    } else {
+      alert("This site requires Geolocation to work");
+    }
+  }, [])
+
+  // Fetch planes and save in markers
   const fetchPlanes = useCallback(() => {
     const { lat, lng } = getUserMarker(markers);
     const url = `https://opensky-network.org/api/states/all?lamin=${lat - BOUNDS_SIZE}&lomin=${lng - BOUNDS_SIZE}&lamax=${lat + BOUNDS_SIZE}&lomax=${lng + BOUNDS_SIZE}`
@@ -71,43 +101,21 @@ export default function App() {
     })
   }, [markers])
 
+  // Fetch planes every 11s due to API throttling
   useInterval(() => {
     if (markers.length && userPositionFound(markers)) {
       fetchPlanes();
     }
   }, 11000);
 
+  // Trigger fetch once users position is found
   useEffect(() => {
     if (markers.length === 1 && userPositionFound(markers)) {
       fetchPlanes()
     }
   }, [markers, fetchPlanes])
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function (position) {
-        const { latitude, longitude } = position.coords;
-        console.log("New user pos:", latitude, longitude)
-
-        const userMarker = {
-          id: "me",
-          lat: latitude,
-          lng: longitude,
-        }
-        setMarkers((prev) => {
-          const withoutMe = prev.filter(m => m.id !== 'me');
-          return [...withoutMe, userMarker];
-        });
-        setActiveMarkerId("me");
-      }, function (err) {
-        alert(`There was an error getting your location`)
-      });
-    } else {
-      alert("This site requires Geolocation to work");
-    }
-  }, [])
-
-
+  // If active marker plane gets removed, default to user marker
   useEffect(() => {
     if (markers.length && !markers.find(m => m.id === activeMarkerId)) {
       setActiveMarkerId("me");
