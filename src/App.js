@@ -124,7 +124,7 @@ export default function App() {
 
   return (
     <>
-      <Canvas style={{ height: 'calc(100vh - 150px)', width: '100vw' }} >
+      <Canvas style={{ height: 'calc(100vh - 170px)', width: '100vw' }} >
         <pointLight position={[10, 5, 10]} intensity={1} />
         <Suspense fallback={null}>
           <Earth
