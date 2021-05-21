@@ -6,22 +6,29 @@ source: https://sketchfab.com/3d-models/earth-f7a76c63ff1846afb2d606e5c8369c15
 title: Earth
 */
 
-import React, { useRef, useState, useCallback } from 'react'
+import React, { useState, useCallback, Suspense } from 'react'
 import { useGLTF } from '@react-three/drei'
 import { useSpring, a } from '@react-spring/three';
+import Airplane from "./Airplane";
+
+import { isPlane } from "../utils";
 
 const LONGITUDE_OFFSET = -Math.PI / 2;
 
-export default function Model({ lat, lng, isPlane }) {
-  const group = useRef();
+export default function Model({ marker }) {
+  const { lat, lng, rotation } = marker;
+
+  const markerIsPlane = isPlane(marker);
+
   const lngRot = -(lng * Math.PI / 180) + LONGITUDE_OFFSET;
   const latRot = (lat * Math.PI / 180);
 
   const [zoom, setZoom] = useState(false);
-  const { scale, position, rotation } = useSpring({
+
+  const { scale, position, earthRotation } = useSpring({
     scale: zoom ? [4, 4, 4] : [2, 2, 2],
-    position: zoom ? [0, 0, 4.48] : [0, 0, 2.24],
-    rotation: [latRot, lngRot, 0]
+    position: zoom ? [0, 0, 4.5] : [0, 0, 2.25],
+    earthRotation: [latRot, lngRot, 0],
   });
 
 
@@ -29,12 +36,12 @@ export default function Model({ lat, lng, isPlane }) {
     setZoom((prev) => !prev);
   }, [])
 
-  const { nodes, materials } = useGLTF('/scene.gltf')
+  const { nodes, materials } = useGLTF('/earth.gltf')
 
   const hasCoordinates = lat && lng;
   return (
     <>
-      <a.group ref={group} onClick={earthClick} rotation={rotation} scale={scale} dispose={null}>
+      <a.group onClick={earthClick} rotation={earthRotation} scale={scale} dispose={null}>
         <group rotation={[-Math.PI / 2, 0, 0]}>
           <group rotation={[Math.PI / 2, 0, 0]}>
             <group scale={[1.13, 1.13, 1.13]}>
@@ -44,10 +51,22 @@ export default function Model({ lat, lng, isPlane }) {
         </group>
       </a.group>
       {hasCoordinates && (
-        < a.mesh position={position}>
-          <a.sphereGeometry args={[0.01, 16, 16]} />
-          <meshStandardMaterial color={isPlane ? 'hotpink' : 'orange'} />
-        </a.mesh>
+        <>
+          {
+            markerIsPlane ? (
+              <>
+                <Suspense fallback={null}>
+                  <Airplane position={position} planeRotation={rotation} />
+                </Suspense>
+              </>
+            ) : (
+              < a.mesh position={position} >
+                <a.sphereGeometry args={[0.01, 16, 16]} />
+                <meshStandardMaterial color={'orange'} />
+              </a.mesh>
+            )
+          }
+        </>
       )}
     </>
   )
