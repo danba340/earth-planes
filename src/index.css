@@ -3,4 +3,21 @@ body {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #050505;
+  color: wheat;
+  min-height: 100vh;
+}
+
+h3 {
+  font-size: 14px;
+}
+
+.controls {
+  padding: 8px 24px;
+  background: #0a0a0a;
+  height: 150px;
+}
+
+button {
+  margin-right: 8px;
 }
