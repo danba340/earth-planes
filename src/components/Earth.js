@@ -15,7 +15,7 @@ import { isPlane } from "../utils";
 
 const LONGITUDE_OFFSET = -Math.PI / 2;
 
-export default function Model({ marker }) {
+export default function Earth({ marker }) {
   const { lat, lng, rotation } = marker;
 
   // Helper variables for conditionals
@@ -33,7 +33,6 @@ export default function Model({ marker }) {
     position: zoom ? [0, 0, 4.5] : [0, 0, 2.25],
     earthRotation: [latRot, lngRot, 0],
   });
-
 
   const earthClick = useCallback(() => {
     setZoom((prev) => !prev);
@@ -58,7 +57,7 @@ export default function Model({ marker }) {
             markerIsPlane ? (
               <>
                 <Suspense fallback={null}>
-                  <Airplane position={position} planeRotation={rotation} />
+                  <Airplane markerId={marker.id} earthRotation={earthRotation} position={position} planeRotation={rotation} />
                 </Suspense>
               </>
             ) : (

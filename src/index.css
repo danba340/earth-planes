@@ -37,6 +37,9 @@ button {
 }
 
 @media only screen and (max-width: 600px) {
+  h1 {
+    font-size: 26px;
+  }
   h3,
   p {
     font-size: 10px;

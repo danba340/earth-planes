@@ -6,23 +6,31 @@ source: https://sketchfab.com/3d-models/airplane-628232dd846249f6a89ed3fb2e1cd4f
 title: Airplane
 */
 
-import React from 'react'
 import { useGLTF } from '@react-three/drei'
 import { a, useSpring } from '@react-spring/three';
 
 // Offset so correct for model initial positon compared to earth
 const AIRPLANE_ROTATE_OFFSET = -Math.PI / 2;
 
-export default function Airplane({ planeRotation, position }) {
+export default function Airplane({ markerId, planeRotation, position }) {
 
   const { rotation } = useSpring({
-    rotation: [Math.PI / 2, planeRotation + AIRPLANE_ROTATE_OFFSET, 0]
+    rotation: [Math.PI / 2, planeRotation + AIRPLANE_ROTATE_OFFSET, 0],
   });
 
   const { nodes, materials } = useGLTF('/airplane.gltf')
 
+  materials['Material.001'].color = {
+    r: parseInt(markerId.slice(0, 2), 16) / 256,
+    g: parseInt(markerId.slice(2, 4), 16) / 256,
+    b: parseInt(markerId.slice(4, 6), 16) / 256,
+  }
+
   return (
-    <a.group transparent position={position} scale={[0.01, 0.01, 0.01]} rotation={rotation} dispose={null}>
+    <a.group position={position} scale={[0.01, 0.01, 0.01]}
+      // rotation={[Math.PI / 2, planeRotation + AIRPLANE_ROTATE_OFFSET, 0]}
+      rotation={rotation}
+      dispose={null}>
       <group rotation={[-Math.PI / 2, 0, 0]}>
         <group rotation={[Math.PI / 2, 0, 0]}>
           <group name="Cylinder" position={[0, 0, 0]} rotation={[0, 0, 0]} scale={[1, 1, 1]}>
