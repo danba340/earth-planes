@@ -20,7 +20,7 @@ export default function App() {
   const planes = usePlanes(userLocation, 11000)
 
   // Helper variables for conditionals
-  const markers = userLocation ? [{ id: 'me', type: "me", ...userLocation }, ...planes] : [nullIslandMarker]
+  const markers = [userLocation ? { id: 'me', type: "me", ...userLocation } : nullIslandMarker, ...planes]
   const activeMarker = markers.find(m => m.id === activeMarkerId);
 
   // Get user location and save to markers and set active marker to user location marker
@@ -32,19 +32,19 @@ export default function App() {
         setActiveMarkerId("me")
         setUserLocation({ lat: latitude, lng: longitude });
       }, function (err) {
-        alert(`There was an error getting your location`)
+        alert(`There was an error getting your location, this site need you location in order to show surrounding planes`)
       });
     } else {
-      alert("This site requires Geolocation to work");
+      alert(`There was an error getting your location, this site need you location in order to show surrounding planes`)
     }
-  }, [setUserLocation])
+  }, [])
 
   // If active marker plane gets removed, default to user marker
   useEffect(() => {
-    if (planes.length && !planes.find(m => m.id === activeMarkerId)) {
-      setActiveMarkerId("me");
+    if (!activeMarker) {
+      setActiveMarkerId(userLocation ? "me" : "nullIsland");
     }
-  }, [activeMarkerId, planes])
+  }, [activeMarker, userLocation])
 
   return (
     <>
@@ -60,7 +60,9 @@ export default function App() {
       <div className="title">
         <h1>3D Nearby Plane Tracker</h1>
       </div>
-      <ControlPanel markers={markers} activeMarkerId={activeMarkerId} setActiveMarkerId={setActiveMarkerId} />
+      <div className="controls">
+        <ControlPanel markers={markers} activeMarkerId={activeMarkerId} setActiveMarkerId={setActiveMarkerId} />
+      </div>
     </>
   )
 }

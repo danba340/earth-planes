@@ -22,10 +22,11 @@ export default function usePlanes(userLocation, refetchInterval) {
 				if (data.states) {
 					const incomingPlanes = data.states.map(plane => {
 						const id = plane[0];
+						const origin = plane[2]
 						const lat = plane[6];
 						const lng = plane[5];
 						const distance = calcDistance(lat, lng, userLocation.lat, userLocation.lng)
-						return ({ id, lat, lng, distance, type: "plane", rotation: 0 });
+						return ({ id, lat, lng, origin, distance, type: "plane", rotation: 0 });
 					})
 					setPlanes((prev) => {
 						const currPlanes = prev

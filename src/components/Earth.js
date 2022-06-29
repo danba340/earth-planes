@@ -20,7 +20,6 @@ export default function Earth({ marker }) {
 
   // Helper variables for conditionals
   const markerIsPlane = isPlane(marker);
-  const hasCoordinates = lat && lng;
 
   // Calculate lat,lng to radian rotations for earth
   const lngRot = -(lng * Math.PI / 180) + LONGITUDE_OFFSET;
@@ -42,15 +41,11 @@ export default function Earth({ marker }) {
   return (
     <>
       <a.group onClick={earthClick} rotation={earthRotation} scale={scale} dispose={null}>
-        <group rotation={[-Math.PI / 2, 0, 0]}>
-          <group rotation={[Math.PI / 2, 0, 0]}>
-            <group scale={[1.13, 1.13, 1.13]}>
-              <mesh geometry={nodes.mesh_0.geometry} material={materials['Scene_-_Root']} />
-            </group>
-          </group>
+        <group scale={[1.13, 1.13, 1.13]}>
+          <mesh geometry={nodes.mesh_0.geometry} material={materials['Scene_-_Root']} />
         </group>
       </a.group>
-      {hasCoordinates && (
+      {marker && (
         <>
           {markerIsPlane ? (
             <Suspense fallback={null}>

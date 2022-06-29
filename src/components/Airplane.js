@@ -45,33 +45,24 @@ function Airplane({ markerId, rotation, position }) {
       position={position}
       scale={scale}
       rotation={planeRotation}
-      dispose={null}
     >
-      <group rotation={[-Math.PI / 2, 0, 0]}>
-        <group rotation={[Math.PI / 2, 0, 0]}>
-          <group name="Cylinder" position={[0, 0, 0]} rotation={[0, 0, 0]}
-            scale={[1, 1, 1]}
-          >
-            <group name="Cylinder001" position={[0, 0, 1.8]} rotation={[0, 0, 0]}
-              scale={[0.3, 0.3, 0.3]}
-            >
-              <mesh geometry={nodes.Cylinder001_Material005_0.geometry} material={materials['Material.005']} />
-              <mesh
-                geometry={nodes.Cylinder001_Material003_0.geometry}
-                material={nodes.Cylinder001_Material003_0.material}
-              />
-            </group>
-            <mesh geometry={nodes.Cylinder_Material003_0.geometry} material={nodes.Cylinder_Material003_0.material} />
-            <mesh geometry={nodes.Cylinder_Material001_0.geometry} material={materials['Material.001']} />
-            <mesh geometry={nodes.Cylinder_Material002_0.geometry} material={materials['Material.002']} />
-            <mesh geometry={nodes.Cylinder_Material004_0.geometry} material={materials['Material.004']} />
-          </group>
-          <group position={[487.22, 868.26, 779]} rotation={[0, 0, 0]}
-            scale={[100, 100, 100]}
-          >
-            <group rotation={[Math.PI / 2, 0, 0]} />
-          </group>
+      <group name="Cylinder"
+        scale={[1, 1, 1]}
+      >
+        <group name="Cylinder001"
+          position={[0, 0, 1.8]}
+          scale={[0.3, 0.3, 0.3]}
+        >
+          <mesh geometry={nodes.Cylinder001_Material005_0.geometry} material={materials['Material.005']} />
+          <mesh
+            geometry={nodes.Cylinder001_Material003_0.geometry}
+            material={nodes.Cylinder001_Material003_0.material}
+          />
         </group>
+        <mesh geometry={nodes.Cylinder_Material003_0.geometry} material={nodes.Cylinder_Material003_0.material} />
+        <mesh geometry={nodes.Cylinder_Material001_0.geometry} material={materials['Material.001']} />
+        <mesh geometry={nodes.Cylinder_Material002_0.geometry} material={materials['Material.002']} />
+        <mesh geometry={nodes.Cylinder_Material004_0.geometry} material={materials['Material.004']} />
       </group>
     </a.group>
   )

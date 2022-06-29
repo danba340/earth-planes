@@ -10,6 +10,12 @@ export function isPlane(marker) {
     return marker.type === "plane"
 }
 
+export function markerTypeToEmoji(type) {
+    if (type === "me") return "🧍🏻"
+    if (type === "plane") return "🛩"
+    return "🤔"
+}
+
 export function getUserMarker(markers) {
     return markers.find(m => m.id === "me")
 }
