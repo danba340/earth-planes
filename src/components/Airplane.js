@@ -8,33 +8,53 @@ title: Airplane
 
 import { useGLTF } from '@react-three/drei'
 import { a, useSpring } from '@react-spring/three';
+import { useEffect } from 'react';
+
+useGLTF.preload('/scene.gltf')
 
 // Offset so correct for model initial positon compared to earth
-const AIRPLANE_ROTATE_OFFSET = -Math.PI / 2;
+const PLANE_ROTATE_OFFSET = -Math.PI / 2;
 
-export default function Airplane({ markerId, planeRotation, position }) {
+function Airplane({ markerId, rotation, position }) {
 
-  const { rotation } = useSpring({
-    rotation: [Math.PI / 2, planeRotation + AIRPLANE_ROTATE_OFFSET, 0],
+
+  const { scale } = useSpring({
+    from: { scale: 0 },
+    to: { scale: 0.01 },
+    config: { duration: 500 },
+  });
+
+  const { planeRotation } = useSpring({
+    planeRotation: [Math.PI / 2, rotation + PLANE_ROTATE_OFFSET, 0],
   });
 
   const { nodes, materials } = useGLTF('/airplane.gltf')
 
-  materials['Material.001'].color = {
-    r: parseInt(markerId.slice(0, 2), 16) / 256,
-    g: parseInt(markerId.slice(2, 4), 16) / 256,
-    b: parseInt(markerId.slice(4, 6), 16) / 256,
-  }
+
+  useEffect(() => {
+    scale.reset()
+    materials['Material.001'].color = {
+      r: parseInt(markerId.slice(0, 2), 16) / 256,
+      g: parseInt(markerId.slice(2, 4), 16) / 256,
+      b: parseInt(markerId.slice(4, 6), 16) / 256,
+    }
+  }, [markerId, materials, scale])
 
   return (
-    <a.group position={position} scale={[0.01, 0.01, 0.01]}
-      // rotation={[Math.PI / 2, planeRotation + AIRPLANE_ROTATE_OFFSET, 0]}
-      rotation={rotation}
-      dispose={null}>
+    <a.group
+      position={position}
+      scale={scale}
+      rotation={planeRotation}
+      dispose={null}
+    >
       <group rotation={[-Math.PI / 2, 0, 0]}>
         <group rotation={[Math.PI / 2, 0, 0]}>
-          <group name="Cylinder" position={[0, 0, 0]} rotation={[0, 0, 0]} scale={[1, 1, 1]}>
-            <group name="Cylinder001" position={[0, 0, 1.8]} rotation={[0, 0, 0]} scale={[0.3, 0.3, 0.3]}>
+          <group name="Cylinder" position={[0, 0, 0]} rotation={[0, 0, 0]}
+            scale={[1, 1, 1]}
+          >
+            <group name="Cylinder001" position={[0, 0, 1.8]} rotation={[0, 0, 0]}
+              scale={[0.3, 0.3, 0.3]}
+            >
               <mesh geometry={nodes.Cylinder001_Material005_0.geometry} material={materials['Material.005']} />
               <mesh
                 geometry={nodes.Cylinder001_Material003_0.geometry}
@@ -46,7 +66,9 @@ export default function Airplane({ markerId, planeRotation, position }) {
             <mesh geometry={nodes.Cylinder_Material002_0.geometry} material={materials['Material.002']} />
             <mesh geometry={nodes.Cylinder_Material004_0.geometry} material={materials['Material.004']} />
           </group>
-          <group position={[487.22, 868.26, 779]} rotation={[0, 0, 0]} scale={[100, 100, 100]}>
+          <group position={[487.22, 868.26, 779]} rotation={[0, 0, 0]}
+            scale={[100, 100, 100]}
+          >
             <group rotation={[Math.PI / 2, 0, 0]} />
           </group>
         </group>
@@ -55,4 +77,5 @@ export default function Airplane({ markerId, planeRotation, position }) {
   )
 }
 
-useGLTF.preload('/scene.gltf')
+export default Airplane
+

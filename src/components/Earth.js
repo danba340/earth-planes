@@ -27,7 +27,6 @@ export default function Earth({ marker }) {
   const latRot = (lat * Math.PI / 180);
 
   const [zoom, setZoom] = useState(false);
-
   const { scale, position, earthRotation } = useSpring({
     scale: zoom ? [4, 4, 4] : [2, 2, 2],
     position: zoom ? [0, 0, 4.5] : [0, 0, 2.25],
@@ -53,20 +52,16 @@ export default function Earth({ marker }) {
       </a.group>
       {hasCoordinates && (
         <>
-          {
-            markerIsPlane ? (
-              <>
-                <Suspense fallback={null}>
-                  <Airplane markerId={marker.id} earthRotation={earthRotation} position={position} planeRotation={rotation} />
-                </Suspense>
-              </>
-            ) : (
-              < a.mesh position={position} >
-                <a.sphereGeometry args={[0.01, 16, 16]} />
-                <meshStandardMaterial color={'orange'} />
-              </a.mesh>
-            )
-          }
+          {markerIsPlane ? (
+            <Suspense fallback={null}>
+              <Airplane markerId={marker.id} earthRotation={earthRotation} position={position} rotation={rotation} />
+            </Suspense>
+          ) : (
+            <a.mesh position={position} >
+              <a.sphereGeometry args={[0.01, 16, 16]} />
+              <meshStandardMaterial color={'orange'} />
+            </a.mesh>
+          )}
         </>
       )}
     </>

@@ -7,14 +7,14 @@ export function userPositionFound(markers) {
 }
 
 export function isPlane(marker) {
-    return marker.id !== "me"
+    return marker.type === "plane"
 }
 
 export function getUserMarker(markers) {
     return markers.find(m => m.id === "me")
 }
 
-export function distance(lat1, lng1, lat2, lng2) {
+export function calcDistance(lat1, lng1, lat2, lng2) {
     const R = 6371e3; // metres
     const φ1 = lat1 * Math.PI / 180; // φ, λ in radians
     const φ2 = lat2 * Math.PI / 180;
