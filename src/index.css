@@ -45,3 +45,12 @@ button {
     font-size: 10px;
   }
 }
+
+.canvas-placeholder {
+  height: calc(100vh - 170px);
+  width: calc(100vw - 6px);
+  background: black;
+  display: grid;
+  place-items: center;
+  border: 3px solid hotpink;
+}
