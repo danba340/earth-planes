@@ -1,7 +1,5 @@
 # 3D plane tracker in React Three Fiber
 
-![preview](preview.png)
-
 ## Run project
 
 ```
