@@ -4,7 +4,7 @@ import {
 	calcRotation,
 	coordinateChange,
 	calcDistance
-} from './utils';
+} from '../utils';
 
 const BOUNDS_SIZE = 2;
 

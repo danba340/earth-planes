@@ -2,10 +2,6 @@ export function markerInfo(marker) {
     return `lat: ${marker.lat.toFixed(2)} | long: ${marker.lng.toFixed(2)}`;
 }
 
-export function userPositionFound(markers) {
-    return markers.some(m => m.id === "me");
-}
-
 export function isPlane(marker) {
     return marker.type === "plane"
 }
