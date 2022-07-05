@@ -7,7 +7,7 @@ export function isPlane(marker) {
 }
 
 export function markerTypeToEmoji(type) {
-    if (type === "me") return "🧍🏻"
+    if (type === "dot") return "🧍🏻"
     if (type === "plane") return "🛩"
     return "🤔"
 }

@@ -1,15 +1,12 @@
 import {
 	markerInfo,
-	getUserMarker,
 	markerTypeToEmoji,
 } from '../utils';
 
 export default function ControlPanel({ markers, activeMarkerId, setActiveMarkerId }) {
 	const activeMarker = markers.find(m => m.id === activeMarkerId);
 	const activeMarkerIndex = markers.findIndex(m => m.id === activeMarkerId);
-	const userMarker = getUserMarker(markers)
-	if (!userMarker && markers.length === 1) return <div>🛩 Loading planes...</div>
-	if (activeMarker && activeMarker.type === "me" && markers.length === 1) return <div>🌎 Found you. 🛩 Loading planes...</div>
+	if (markers.length === 1) return <div>🛩 Loading...</div>
 	console.log(activeMarker)
 	return (
 		<>
@@ -17,9 +14,10 @@ export default function ControlPanel({ markers, activeMarkerId, setActiveMarkerI
 				activeMarker && markers.length > 1 && (
 					<>
 						<h3>
-							<span>{`Index: ${activeMarkerIndex + 1}/${markers.length}`}</span>
+							<span>{`Marker: ${activeMarkerIndex + 1}/${markers.length}`}</span>
 							<span> | </span>
 							<span>Type:{markerTypeToEmoji(activeMarker.type)}</span>
+							<span> | </span>
 							<span>{markerInfo(activeMarker)}</span>
 							{activeMarker.type === "plane" && (
 								<div>

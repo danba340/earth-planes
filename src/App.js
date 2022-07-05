@@ -8,10 +8,11 @@ import useUserLocation from './hooks/useUserLocation';
 import ControlPanel from './components/ControlPanel';
 
 // Initial marker, before user is found
-const nullIslandMarker = {
+export const nullIslandMarker = {
   id: "nullIsland",
   lat: 0,
   lng: 0,
+  type: 'dot'
 }
 
 export default function App() {
@@ -19,8 +20,7 @@ export default function App() {
   const [activeMarkerId, setActiveMarkerId] = useState("nullIsland");
   const planes = usePlanes(userLocation, 11000)
 
-  // Helper variables for conditionals
-  const markers = [userLocation ? { id: 'me', type: "me", ...userLocation } : nullIslandMarker, ...planes]
+  const markers = [userLocation ? { id: 'me', type: "dot", ...userLocation } : nullIslandMarker, ...planes]
   const activeMarker = markers.find(m => m.id === activeMarkerId);
 
   // If active marker plane gets removed, default to user marker

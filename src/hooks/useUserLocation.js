@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { nullIslandMarker } from "../App";
 
 export default function useUserLocation() {
 	const [userLocation, setUserLocation] = useState(null)
@@ -11,10 +12,12 @@ export default function useUserLocation() {
 				const location = { lat: latitude, lng: longitude }
 				setUserLocation(location);
 			}, function (err) {
-				alert(`There was an error getting your location, this site need you location in order to show surrounding planes`)
+				const { lat, lng } = nullIslandMarker
+				setUserLocation({ lat, lng })
 			});
 		} else {
-			alert(`Your browser does not support geolocation, this site need you location in order to show surrounding planes`)
+			const { lat, lng } = nullIslandMarker
+			setUserLocation({ lat, lng })
 		}
 	}, [])
 
