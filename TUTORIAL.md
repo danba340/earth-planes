@@ -1,0 +1,9 @@
+- [x] Overview
+- [x] Render Stars
+- [x] Render Earth
+- [x] Zoom Earth on click
+- [x] Geolocate user
+- [x] Control panel
+- [x] Fetch planes
+- [x] Rotate earth, draw marker
+- [] Render planes
