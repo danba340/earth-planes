@@ -1,8 +1,9 @@
-import { useEffect } from 'react'
-import { useState, useCallback } from 'react'
-import { calcDistance, calcRotation } from '../utils'
+import { useCallback } from 'react'
+import { useState } from 'react'
+import { calcRotation, calcDistance } from '../utils'
 
 import samplePlanes from '../samplePlanes'
+import { useEffect } from 'react'
 import useInterval from './useInterval'
 
 const BASE_URL = 'https://opensky-network.org/api/states/all'
@@ -10,70 +11,58 @@ const BOUNDS_SIZE = 2
 
 function usePlanes(location) {
 	const [planes, setPlanes] = useState([])
-	const [fetchCount, setFetchCount] = useState(0)
 
 	const fetchPlanes = useCallback(() => {
-		if (fetchCount >= 2) return
-		// const { lat, lng } = location
-		// const url = `${BASE_URL}?lamin=${lat - BOUNDS_SIZE}&lomin${lng - BOUNDS_SIZE}&lamax=${lat + BOUNDS_SIZE}&lomax=${lng + BOUNDS_SIZE}`
-		// fetch(url).then(res => {
-		// 	if (res.status === 429) {
-		// 		alert('OpenSky rate limit reached')
-		// 	}
-		// 	res.json().then((data => {
-		// 		console.log(JSON.stringify(data.states))
-		const data = { states: samplePlanes[fetchCount] }
-		setFetchCount(prev => prev + 1)
-		const fetchedPlanes = data.states.map(plane => {
-			const [id, , origin, , , lng, lat] = plane
-			const distance = calcDistance(location.lat, location.lng, lat, lng)
-			return ({
-				id,
-				origin,
-				lat,
-				lng,
-				distance,
-				type: "plane",
-				rotation: 0,
-			})
-		})
+		const { lat, lon } = location
+		fetch(`${BASE_URL}?lamin=${lat - BOUNDS_SIZE}&lomin=${lon - BOUNDS_SIZE}&lamax=${lat + BOUNDS_SIZE}&lomax=${lon + BOUNDS_SIZE}`).then((res) => {
+			res.json().then(data => {
 
-		setPlanes((prev) => {
-			const currPlanes = prev
-			const newPlanes = fetchedPlanes.filter(fp => {
-				return !currPlanes.some(cp => cp.id === fp.id)
-			})
-			const unionPlanes = fetchedPlanes
-				.filter(fp => currPlanes.some(cp => cp.id === fp.id))
-				.map(p => {
-					const { lat, lng } = p
-					const { lat: prevLat, lng: prevLng, rotation: prevRotation } = currPlanes.find(cp => cp.id === p.id)
-					const rotation = lat !== prevLat || lng !== prevLng ? calcRotation(lat, lng, prevLat, prevLng) : prevRotation
+				const fetchedPlanes = data.states.map(plane => {
+					const [id, , origin, , , lon, lat] = plane
+					const distance = calcDistance(lat, lon, location.lat, location.lon)
 					return ({
-						...p,
-						rotation
+						id,
+						origin,
+						lon,
+						lat,
+						type: 'plane',
+						rotation: 0,
+						distance
 					})
 				})
-			const newState = [...unionPlanes, ...newPlanes];
-			console.log(`${unionPlanes.length} updated. ${newPlanes.length} new planes`)
-			return newState.sort((a, b) => {
-				return a.distance - b.distance
+				setPlanes(currPlanes => {
+					const newPlanes = fetchedPlanes.filter(fp => !currPlanes.some(cp => cp.id === fp.id))
+
+					// Check for existing planes in state and calc rotation
+					const existingPlanes = fetchedPlanes
+						.filter(fp => currPlanes.some(cp => cp.id === fp.id))
+						.map(plane => {
+							const { lat, lon } = plane;
+							const currPlane = currPlanes.find(cp => cp.id === plane.id)
+							const { lat: prevLat, lon: prevLon, rotation: prevRotation } = currPlane
+							const rotation = lat !== prevLat || lon !== prevLon ? calcRotation(lat, lon, prevLat, prevLon) : prevRotation
+							return ({
+								...plane,
+								rotation,
+							})
+						})
+					const newState = [...newPlanes, ...existingPlanes]
+					console.log(`${existingPlanes.length} updated. ${newPlanes.length} added.`)
+					return newState.sort((a, b) => {
+						return a.distance - b.distance
+					})
+				})
 			})
 		})
-		// 	}))
-		// })
-	}, [location, fetchCount])
+
+	}, [setPlanes, location])
 
 	useEffect(() => {
-		if (location) {
-			fetchPlanes()
-		}
+		fetchPlanes()
 	}, [location, fetchPlanes])
 
 	useInterval(() => {
-		if (location) {
-			fetchPlanes()
-		}
+		fetchPlanes()
 	}, 10000)
 
 	return planes

@@ -6,12 +6,20 @@ source: https://sketchfab.com/3d-models/airplane-628232dd846249f6a89ed3fb2e1cd4f
 title: Airplane
 */
 
-import { useGLTF } from '@react-three/drei'
-import { a, useSpring } from '@react-spring/three'
-import { useEffect } from 'react'
+import React, { useEffect } from 'react'
+import { useGLTF, } from '@react-three/drei'
+import { a, useSpring } from '@react-spring/three';
 
-export default function Model({ position, rotation, markerId }) {
-  const { nodes, materials } = useGLTF('/plane.gltf')
+const PLANE_ROTATE_OFFSET = -Math.PI / 2;
+
+export default function Plane({ id, position, rotation }) {
+  const { nodes, materials, } = useGLTF('/plane.gltf')
+
+  materials['Material.001'].color = {
+    r: parseInt(id.slice(0, 2), 16) / 256,
+    g: parseInt(id.slice(2, 4), 16) / 256,
+    b: parseInt(id.slice(4, 6), 16) / 256
+  }
 
   const { scale } = useSpring({
     from: { scale: 0 },
@@ -20,30 +28,38 @@ export default function Model({ position, rotation, markerId }) {
   })
 
   const { planeRotation } = useSpring({
-    planeRotation: [Math.PI / 2, rotation, 0]
+    planeRotation: [Math.PI / 2, rotation + PLANE_ROTATE_OFFSET, 0]
   })
 
   useEffect(() => {
     scale.reset()
-    materials['Material.001'].color = {
-      r: parseInt(markerId.slice(0, 2), 16) / 256,
-      g: parseInt(markerId.slice(2, 4), 16) / 256,
-      b: parseInt(markerId.slice(4, 6), 16) / 256,
-    }
-  }, [markerId])
+  }, [id])
 
   return (
-    <a.group position={position} rotation={planeRotation} scale={scale} dispose={null}>
-      <group name="RootNode">
-        <group name="Cylinder" position={[0, 0, 0]} scale={1}>
-          <group name="Cylinder001" position={[0, 0, 1.8]} scale={0.3}>
-            <mesh name="Cylinder001_Material005_0" geometry={nodes.Cylinder001_Material005_0.geometry} material={materials['Material.005']} />
-            <mesh name="Cylinder001_Material003_0" geometry={nodes.Cylinder001_Material003_0.geometry} material={materials['Material.003']} />
+    <a.group scale={scale} position={position} rotation={planeRotation} dispose={null}>
+      <group name="Sketchfab_Scene">
+        <group name="Sketchfab_model" rotation={[-Math.PI / 2, 0, 0]}>
+          <group name="cbdb2b201266454e947bf115439508aefbx" rotation={[Math.PI / 2, 0, 0]}>
+            <group name="Object_2">
+              <group name="RootNode">
+                <group name="Cylinder" position={[0, 0, 0]} scale={1}>
+                  <group name="Cylinder001" position={[0, 0, 1.8]} scale={0.3}>
+                    <mesh name="Cylinder001_Material005_0" geometry={nodes.Cylinder001_Material005_0.geometry} material={materials['Material.005']} />
+                    <mesh name="Cylinder001_Material003_0" geometry={nodes.Cylinder001_Material003_0.geometry} material={materials['Material.003']} />
+                  </group>
+                  <mesh name="Cylinder_Material003_0" geometry={nodes.Cylinder_Material003_0.geometry} material={materials['Material.003']} />
+                  <mesh name="Cylinder_Material001_0" geometry={nodes.Cylinder_Material001_0.geometry} material={materials['Material.001']} />
+                  <mesh name="Cylinder_Material002_0" geometry={nodes.Cylinder_Material002_0.geometry} material={materials['Material.002']} />
+                  <mesh name="Cylinder_Material004_0" geometry={nodes.Cylinder_Material004_0.geometry} material={materials['Material.004']} />
+                </group>
+                <group name="Point" position={[487.22, 868.26, 779]} scale={100}>
+                  <group name="Object_13" rotation={[Math.PI / 2, 0, 0]}>
+                    <group name="Object_14" />
+                  </group>
+                </group>
+              </group>
+            </group>
           </group>
-          <mesh name="Cylinder_Material003_0" geometry={nodes.Cylinder_Material003_0.geometry} material={materials['Material.003']} />
-          <mesh name="Cylinder_Material001_0" geometry={nodes.Cylinder_Material001_0.geometry} material={materials['Material.001']} />
-          <mesh name="Cylinder_Material002_0" geometry={nodes.Cylinder_Material002_0.geometry} material={materials['Material.002']} />
-          <mesh name="Cylinder_Material004_0" geometry={nodes.Cylinder_Material004_0.geometry} material={materials['Material.004']} />
         </group>
       </group>
     </a.group>

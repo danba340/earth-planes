@@ -1,11 +1,11 @@
 Model Information:
-* title:	Earth
-* source:	https://sketchfab.com/3d-models/earth-f7a76c63ff1846afb2d606e5c8369c15
-* author:	PatelDev (https://sketchfab.com/PatelDev)
+* title:	Airplane
+* source:	https://sketchfab.com/3d-models/airplane-628232dd846249f6a89ed3fb2e1cd4f5
+* author:	Omar_Mohamed (https://sketchfab.com/Omar_Mohamed)
 
 Model License:
 * license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
 * requirements:	Author must be credited. Commercial use is allowed.
 
 If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
-This work is based on "Earth" (https://sketchfab.com/3d-models/earth-f7a76c63ff1846afb2d606e5c8369c15) by PatelDev (https://sketchfab.com/PatelDev) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+This work is based on "Airplane" (https://sketchfab.com/3d-models/airplane-628232dd846249f6a89ed3fb2e1cd4f5) by Omar_Mohamed (https://sketchfab.com/Omar_Mohamed) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

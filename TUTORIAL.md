@@ -1,9 +1,12 @@
 - [x] Overview
-- [x] Render Stars
-- [x] Render Earth
+- [x] Create Star Background
+- [x] Convert GLTF Models to JSX
+- [x] Earth
+- [x] Marker
+- [x] Planes
+- [x] Rotation and color of plane
 - [x] Zoom Earth on click
+- [x] Rotate earth to selected marker
 - [x] Geolocate user
-- [x] Control panel
-- [x] Fetch planes
-- [x] Rotate earth, draw marker
-- [] Render planes
+- [] Fetch real planes
+- [x] Get cool plane info in control panel

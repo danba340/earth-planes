@@ -6,55 +6,51 @@ source: https://sketchfab.com/3d-models/earth-f7a76c63ff1846afb2d606e5c8369c15
 title: Earth
 */
 
-import React, { useState, useCallback } from 'react'
+import React, { useState } from 'react'
 import { useGLTF } from '@react-three/drei'
 import { useSpring, a } from '@react-spring/three';
-
 import Plane from './Plane'
 
-const LONGITUDE_OFFSET = -Math.PI / 2
+const LON_OFFSET = -Math.PI / 2
 
-export default function Model({ marker }) {
+export default function Earth({ marker }) {
   const [isZoom, setIsZoom] = useState(false)
 
-  const { lat, lng } = marker
+  const { lat, lon } = marker
 
-  const latRot = (lat * Math.PI / 180);
-  const lngRot = -(lng * Math.PI / 180) + LONGITUDE_OFFSET;
-
-  const { scale, earthRotation, markerPosition } = useSpring({
-    scale: isZoom ? [4, 4, 4] : [2, 2, 2],
-    earthRotation: [latRot, lngRot, 0],
-    markerPosition: isZoom ? [0, 0, 4.5] : [0, 0, 2.5]
-  })
+  const latRot = (lat * Math.PI / 180)
+  const lonRot = -(lon * Math.PI / 180) + LON_OFFSET
 
   const { nodes, materials } = useGLTF('/earth.gltf')
 
-  const handleEarthClick = useCallback(() => {
-    setIsZoom(prev => !prev)
-  }, [setIsZoom])
+  const { scale, markerPosition, rotation } = useSpring({
+    scale: isZoom ? 4 : 2,
+    markerPosition: isZoom ? [0, 0, 4.5] : [0, 0, 2.5],
+    rotation: [latRot, lonRot, 0]
+  })
 
   return (
     <>
       <a.group
-        onClick={handleEarthClick}
         scale={scale}
-        rotation={earthRotation}
         dispose={null}
+        rotation={rotation}
+        onClick={() => {
+          setIsZoom(prev => !prev)
+        }}
       >
         <group scale={1.13}>
           <mesh geometry={nodes.Object_4.geometry} material={materials['Scene_-_Root']} />
         </group>
       </a.group>
       {marker.type === 'plane' ? (
-        <Plane position={markerPosition} rotation={marker.rotation} markerId={marker.id} />
+        <Plane id={marker.id} position={markerPosition} rotation={marker.rotation} />
       ) : (
         <a.mesh position={markerPosition}>
           <sphereGeometry args={[0.01]} />
           <meshStandardMaterial color={'orange'} />
         </a.mesh>
-      )
-      }
+      )}
     </>
   )
 }
