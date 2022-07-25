@@ -1,13 +1,3 @@
-export const markerTypeToEmoji = (type) => {
-	if (type === 'person') {
-		return "🧍🏻"
-	}
-	if (type === 'plane') {
-		return "🛩"
-	}
-	return "🏝️"
-}
-
 export const calcDistance = (lat1, lng1, lat2, lng2) => {
 	const R = 6371e3; // metres
 	const φ1 = lat1 * Math.PI / 180; // φ, λ in radians

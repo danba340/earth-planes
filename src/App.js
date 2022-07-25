@@ -1,36 +1,26 @@
-import { useState, useMemo } from 'react'
-import { Canvas } from '@react-three/fiber';
-import { Stars } from "@react-three/drei";
+import { useState } from 'react'
 
-import Earth from './components/Earth'
 import ControlPanel from './components/ControlPanel'
-import useGeoloaction from './hooks/useGeolocation';
-import { useEffect } from 'react';
-import usePlanes from './hooks/usePlanes';
-
-const nullIsland = {
-  id: 'nullIsland',
-  type: 'island',
-  lat: 0,
-  lng: 0,
-}
+import { Canvas } from '@react-three/fiber'
+import { Stars } from '@react-three/drei'
+import Earth from './components/Earth'
+import useGeoloaction from './hooks/useGeolocation'
+import usePlanes from './hooks/usePlanes'
 
 export default function App() {
-  const [activeMarkerId, setActiveMarkerId] = useState('nullIsland')
   const userLocation = useGeoloaction()
-  const planes = usePlanes(userLocation)
+  const [activeMarkerId, setActiveMarkerId] = useState('me')
+  const planes = usePlanes(userLocation || { lat: 0, lon: 0 })
 
-  const markers = useMemo(() => userLocation ? [{ id: 'me', type: 'person', ...userLocation }, ...planes] : [nullIsland], [userLocation, planes])
-
-  // If current marker id is no longer in markers list, default to first item in the marker list
-  useEffect(() => {
-    const activeMarker = markers.find(marker => marker.id === activeMarkerId)
-    if (!activeMarker) {
-      setActiveMarkerId(markers[0].id)
-    }
-  }, [userLocation, activeMarkerId, markers])
-
+  const markers = userLocation ? [
+    { id: 'me', type: 'human', ...userLocation },
+    ...planes
+  ] : [
+    ...planes
+  ]
   const activeMarker = markers.find(marker => marker.id === activeMarkerId)
+
+  console.log('active marker', activeMarker)
 
   return (
     <>
@@ -39,11 +29,11 @@ export default function App() {
       </div>
       <Canvas style={{
         height: 'calc(100vh - 170px)',
-        width: '100vw'
+        width: '100vw',
       }}>
-        <pointLight position={[10, 5, 10]} intensity={1} />
+        <pointLight position={[10, 5, 10]} />
         <Stars />
-        <Earth marker={activeMarker || nullIsland} />
+        <Earth marker={activeMarker || { lat: 0, lon: 0 }} />
       </Canvas>
       <div className="controls">
         <ControlPanel markers={markers} activeMarkerId={activeMarkerId} setActiveMarkerId={setActiveMarkerId} />

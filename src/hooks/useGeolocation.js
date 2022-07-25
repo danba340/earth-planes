@@ -11,7 +11,7 @@ function useGeoloaction() {
 				console.log('User geolocated', latitude, longitude)
 				setLocation({
 					lat: latitude,
-					lng: longitude
+					lon: longitude
 				})
 			})
 		} else {

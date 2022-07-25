@@ -1,6 +1,6 @@
-import { useEffect } from 'react'
-import { useState, useCallback } from 'react'
-import { calcDistance, calcRotation } from '../utils'
+import { useCallback, useEffect } from 'react'
+import { useState } from 'react'
+import { calcRotation, calcDistance } from '../utils'
 
 import useInterval from './useInterval'
 
@@ -11,64 +11,56 @@ function usePlanes(location) {
 	const [planes, setPlanes] = useState([])
 
 	const fetchPlanes = useCallback(() => {
-		const { lat, lng } = location
-		const url = `${BASE_URL}?lamin=${lat - BOUNDS_SIZE}&lomin${lng - BOUNDS_SIZE}&lamax=${lat + BOUNDS_SIZE}&lomax=${lng + BOUNDS_SIZE}`
-		fetch(url).then(res => {
-			if (res.status === 429) {
-				alert('OpenSky rate limit reached')
-			}
-			res.json().then((data => {
-				console.log(JSON.stringify(data.states))
+		const { lat, lon } = location
+		fetch(`${BASE_URL}?lamin=${lat - BOUNDS_SIZE}&lomin=${lon - BOUNDS_SIZE}&lamax=${lat + BOUNDS_SIZE}&lomax=${lon + BOUNDS_SIZE}`).then((res) => {
+			res.json().then(data => {
+
 				const fetchedPlanes = data.states.map(plane => {
-					const [id, , origin, , , lng, lat] = plane
-					const distance = calcDistance(location.lat, location.lng, lat, lng)
+					const [id, , origin, , , lon, lat] = plane
+					const distance = calcDistance(lat, lon, location.lat, location.lon)
 					return ({
 						id,
 						origin,
+						lon,
 						lat,
-						lng,
-						distance,
-						type: "plane",
+						type: 'plane',
 						rotation: 0,
+						distance
 					})
 				})
+				setPlanes(currPlanes => {
+					const newPlanes = fetchedPlanes.filter(fp => !currPlanes.some(cp => cp.id === fp.id))
 
-				setPlanes((prev) => {
-					const currPlanes = prev
-					const newPlanes = fetchedPlanes.filter(fp => {
-						return !currPlanes.some(cp => cp.id === fp.id)
-					})
-					const unionPlanes = fetchedPlanes
+					// Check for existing planes in state and calc rotation
+					const existingPlanes = fetchedPlanes
 						.filter(fp => currPlanes.some(cp => cp.id === fp.id))
-						.map(p => {
-							const { lat, lng } = p
-							const { lat: prevLat, lng: prevLng, rotation: prevRotation } = currPlanes.find(cp => cp.id === p.id)
-							const rotation = lat !== prevLat || lng !== prevLng ? calcRotation(lat, lng, prevLat, prevLng) : prevRotation
+						.map(plane => {
+							const { lat, lon } = plane;
+							const currPlane = currPlanes.find(cp => cp.id === plane.id)
+							const { lat: prevLat, lon: prevLon, rotation: prevRotation } = currPlane
+							const rotation = lat !== prevLat || lon !== prevLon ? calcRotation(lat, lon, prevLat, prevLon) : prevRotation
 							return ({
-								...p,
-								rotation
+								...plane,
+								rotation,
 							})
 						})
-					const newState = [...unionPlanes, ...newPlanes];
-					console.log(`${unionPlanes.length} updated. ${newPlanes.length} new planes`)
+					const newState = [...newPlanes, ...existingPlanes]
+					console.log(`${existingPlanes.length} updated. ${newPlanes.length} added.`)
 					return newState.sort((a, b) => {
 						return a.distance - b.distance
 					})
 				})
-			}))
+			})
 		})
-	}, [location])
+
+	}, [setPlanes, location])
 
 	useEffect(() => {
-		if (location) {
-			fetchPlanes()
-		}
+		fetchPlanes()
 	}, [location, fetchPlanes])
 
 	useInterval(() => {
-		if (location) {
-			fetchPlanes()
-		}
+		fetchPlanes()
 	}, 10000)
 
 	return planes
